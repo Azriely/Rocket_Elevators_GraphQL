@@ -1,4 +1,4 @@
-//dependencies
+//Dependencies
 const express = require("express");
 const { graphqlHTTP } = require("express-graphql");
 const { GraphQLSchema, GraphQLObjectType, GraphQLString } = require("graphql");

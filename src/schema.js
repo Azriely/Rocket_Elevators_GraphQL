@@ -1,7 +1,7 @@
-//-----Dependencies-----//
+//Dependencies
 const { buildSchema } = require("graphql");
 
-//-----POSTGRES------//
+//POSTGRES
 const {Client} = require('pg')
 const client = new Client({
     host: 'codeboxx-postgresql.cq6zrczewpu2.us-east-1.rds.amazonaws.com',
@@ -11,40 +11,36 @@ const client = new Client({
 });
 client.connect(function(error){
     if (!!error) {
-        console.log("Unable to connect to PSQL database.")
+        console.log("Can't connect to PSQL database.")
     } else {
-        console.log("You are connected to PSQL database.")
+        console.log("Connected to PSQL database.")
     }
 });
 
-//-----MYSQL------//
+//MYSQL
 var mysql = require('mysql');
-//const { resolve } = require('path');
-var connectio = mysql.createConnection({
+
+var connection = mysql.createConnection({
     host: 'codeboxx.cq6zrczewpu2.us-east-1.rds.amazonaws.com',
     user: 'codeboxx'  ,
     password: 'Codeboxx1!',
     database: 'dominhannguyen'  
 
 });
-connectio.connect(function(error){
+connection.connect(function(error){
     if (!!error) {
-        console.log("Unable to connect to mySQL database.");
+        console.log("Can't connect to mySQL database.");
     } else {
-        console.log("You are connected to mySQL database.");
+        console.log("Connected to mySQL database.");
     }
 });
 
 
-//-----------------------------------SCHEMA CREATION---------------------------------------//
+//Schema creation
 const schema = buildSchema(`
     type Query {
         users: [User!]!,
         user(id: Int!): User!
-    }
-
-    type Mutation {
-        editUser(id: Int!, name: String!, email: String!): User!
     }
 
     type User {
