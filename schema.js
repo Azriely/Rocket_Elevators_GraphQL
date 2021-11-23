@@ -1,5 +1,10 @@
 //-----Dependencies-----//
+var express = require('express');
+var { graphqlHTTP } = require('express-graphql');
 const { buildSchema } = require("graphql");
+
+const app = express();
+const PORT = process.env.PORT || 3000;
 
 //-----POSTGRES------//
 const {Client} = require('pg')
@@ -19,15 +24,14 @@ client.connect(function(error){
 
 //-----MYSQL------//
 var mysql = require('mysql');
-//const { resolve } = require('path');
-var connectio = mysql.createConnection({
+var connection = mysql.createConnection({
     host: 'codeboxx.cq6zrczewpu2.us-east-1.rds.amazonaws.com',
     user: 'codeboxx'  ,
     password: 'Codeboxx1!',
     database: 'dominhannguyen'  
 
 });
-connectio.connect(function(error){
+connection.connect(function(error){
     if (!!error) {
         console.log("Unable to connect to mySQL database.");
     } else {
@@ -63,3 +67,23 @@ const schema = buildSchema(`
 `);
 
 module.exports = schema;
+
+
+//-----------------------------------Queries---------------------------------------//
+
+//-----------------------------------Resolve---------------------------------------//
+
+//-----------------------------Queries functions-----------------------------------//
+
+//-----------------------------------------Express Server---------------------------------------------//
+var app = express();
+app.use('/graphql', graphqlHTTP({
+    schema: schema,
+    rootValue: root,
+    graphiql: true
+}));
+
+
+app.listen(PORT, () => {
+    console.log("Server is running");
+});
