@@ -5,11 +5,12 @@ const {
   GraphQLObjectType,
   GraphQLInt,
   GraphQLList,
-  GraphQLNonNull,
+  GraphQLNonNull, //TODO: Can't get NonNull to work yet, so not being used atm.
   GraphQLSchema,
   GraphQLString,
   GraphQLFloat,
 } = require("graphql");
+const { GraphQLDateTime } = require("graphql-iso-date");
 
 const PORT = process.env.PORT || 3000;
 
@@ -55,8 +56,8 @@ const InterventionType = new GraphQLObjectType({
     battery_id: { type: GraphQLString },
     column_id: { type: GraphQLString },
     elevator_id: { type: GraphQLString },
-    intervention_start_time: { type: GraphQLInt },
-    intervention_end_time: { type: GraphQLInt },
+    intervention_start_time: { type: GraphQLDateTime },
+    intervention_end_time: { type: GraphQLDateTime },
     result: { type: GraphQLString },
     report: { type: GraphQLString },
     status: { type: GraphQLString },
@@ -154,8 +155,8 @@ const RootQueryType = new GraphQLObjectType({
         battery_id: { type: GraphQLString },
         column_id: { type: GraphQLString },
         elevator_id: { type: GraphQLString },
-        intervention_start_time: { type: GraphQLInt }, //TODO: not sure if times should be put in Int
-        intervention_end_time: { type: GraphQLInt }, //TODO: not sure if times should be put in Int
+        intervention_start_time: { type: GraphQLDateTime },
+        intervention_end_time: { type: GraphQLDateTime },
         result: { type: GraphQLString },
         report: { type: GraphQLString },
         status: { type: GraphQLString },
