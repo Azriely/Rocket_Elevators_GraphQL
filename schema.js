@@ -165,18 +165,24 @@ const RootQueryType = new GraphQLObjectType({
       description: "An intervention",
       args: {
         id: { type: GraphQLInt },
-        employee_id: { type: GraphQLString },
-        battery_id: { type: GraphQLString },
-        column_id: { type: GraphQLString },
-        elevator_id: { type: GraphQLString },
-        intervention_start_time: { type: GraphQLDateTime },
-        intervention_end_time: { type: GraphQLDateTime },
-        result: { type: GraphQLString },
-        report: { type: GraphQLString },
-        status: { type: GraphQLString },
       },
-      resolve: (parent, args) =>
-        interventions.find((intervention) => intervention.id === args.id),
+      resolve: (parent, args) => {
+        // Make a connection to MySQL and blah...
+        // let result;
+        connection.query(
+          `SELECT * FROM interventions WHERE id = ${args.id}`,
+          (err, res, fields) => {
+            if (err) console.log(err);
+            console.log("========");
+            console.log(res);
+            console.log("+++++++++");
+            console.log(res[0]);
+
+            // console.log(result);
+          }
+        );
+        // return result;
+      },
     },
     interventions: {
       type: new GraphQLList(InterventionType),
@@ -193,17 +199,6 @@ const RootQueryType = new GraphQLObjectType({
       description: "An Address",
       args: {
         id: { type: GraphQLInt },
-        address_type: { type: GraphQLString },
-        status: { type: GraphQLString },
-        entity: { type: GraphQLString },
-        number_and_street: { type: GraphQLString },
-        suite_and_apartment: { type: GraphQLString },
-        city: { type: GraphQLString },
-        postal_code: { type: GraphQLString },
-        country: { type: GraphQLString },
-        notes: { type: GraphQLString },
-        latitude: { type: GraphQLFloat },
-        longitude: { type: GraphQLFloat },
       },
       resolve: (parent, args) => {
         // Make a connection to MySQL and blah...
@@ -228,17 +223,24 @@ const RootQueryType = new GraphQLObjectType({
       description: "A building",
       args: {
         id: { type: GraphQLInt },
-        admin_name: { type: GraphQLString },
-        admin_email: { type: GraphQLString },
-        admin_phone_numer: { type: GraphQLString },
-        tech_full_name: { type: GraphQLString },
-        tech_email: { type: GraphQLString },
-        tech_phone_number: { type: GraphQLString },
-        address_id: { type: GraphQLInt },
-        customer_id: { type: GraphQLInt },
       },
-      resolve: (parent, args) =>
-        buildings.find((building) => building.id === args.id),
+      resolve: (parent, args) => {
+        // Make a connection to MySQL and blah...
+        // let result;
+        connection.query(
+          `SELECT * FROM buildings WHERE id = ${args.id}`,
+          (err, res, fields) => {
+            if (err) console.log(err);
+            console.log("========");
+            console.log(res);
+            console.log("+++++++++");
+            console.log(res[0]);
+
+            // console.log(result);
+          }
+        );
+        return result;
+      },
     },
     buildings: {
       type: new GraphQLList(BuildingType),
@@ -250,12 +252,24 @@ const RootQueryType = new GraphQLObjectType({
       description: "Building details",
       args: {
         id: { type: GraphQLInt },
-        information_key: { type: GraphQLString },
-        value: { type: GraphQLString },
-        building_id: { type: GraphQLInt },
       },
-      resolve: (parent, args) =>
-        buildingDetails.find((buildingDetail) => buildingDetail.id === args.id),
+      resolve: (parent, args) => {
+        // Make a connection to MySQL and blah...
+        // let result;
+        connection.query(
+          `SELECT * FROM buildingDetails WHERE id = ${args.id}`,
+          (err, res, fields) => {
+            if (err) console.log(err);
+            console.log("========");
+            console.log(res);
+            console.log("+++++++++");
+            console.log(res[0]);
+
+            // console.log(result);
+          }
+        );
+        // return result;
+      },
     },
     buildingDetails: {
       type: new GraphQLList(BuildingDetailType),
@@ -267,19 +281,24 @@ const RootQueryType = new GraphQLObjectType({
       description: "A customer",
       args: {
         id: { type: GraphQLInt },
-        company_name: { type: GraphQLString },
-        company_contact_name: { type: GraphQLString },
-        contact_phone: { type: GraphQLString },
-        contact_email: { type: GraphQLString },
-        company_description: { type: GraphQLString },
-        service_tech_name: { type: GraphQLString },
-        service_tech_phone: { type: GraphQLString },
-        service_tech_email: { type: GraphQLString },
-        address_id: { type: GraphQLInt },
-        user_id: { type: GraphQLInt },
       },
-      resolve: (parent, args) =>
-        customers.find((customer) => customer.id === args.id),
+      resolve: (parent, args) => {
+        // Make a connection to MySQL and blah...
+        // let result;
+        connection.query(
+          `SELECT * FROM customers WHERE id = ${args.id}`,
+          (err, res, fields) => {
+            if (err) console.log(err);
+            console.log("========");
+            console.log(res);
+            console.log("+++++++++");
+            console.log(res[0]);
+
+            // console.log(result);
+          }
+        );
+        // return result;
+      },
     },
     customers: {
       type: new GraphQLList(CustomerType),
@@ -291,14 +310,24 @@ const RootQueryType = new GraphQLObjectType({
       description: "An employee",
       args: {
         id: { type: GraphQLInt },
-        first_name: { type: GraphQLString },
-        last_name: { type: GraphQLString },
-        title: { type: GraphQLString },
-        email: { type: GraphQLString },
-        user_id: { type: GraphQLInt },
       },
-      resolve: (parent, args) =>
-        employees.find((employee) => employee.id === args.id),
+      resolve: (parent, args) => {
+        // Make a connection to MySQL and blah...
+        // let result;
+        connection.query(
+          `SELECT * FROM employees WHERE id = ${args.id}`,
+          (err, res, fields) => {
+            if (err) console.log(err);
+            console.log("========");
+            console.log(res);
+            console.log("+++++++++");
+            console.log(res[0]);
+
+            // console.log(result);
+          }
+        );
+        // return result;
+      },
     },
     employees: {
       type: new GraphQLList(EmployeeType),
