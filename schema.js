@@ -12,7 +12,6 @@ const {
   GraphQLFloat,
 } = require("graphql");
 
-const app = express();
 const PORT = process.env.PORT || 3000;
 
 //POSTGRES
@@ -47,25 +46,18 @@ connection.connect(function (error) {
   }
 });
 
-//Schema creation
-const schema = new GraphQLSchema({
-  query: RootQueryType,
-});
-
-export default schema;
-
 //Type creation
 const InterventionType = new GraphQLObjectType({
   name: "Intervention",
   description: "This is an intervention",
   fields: () => ({
-    id: { type: GraphQLNonNull(GraphQLInt) },
+    id: { type: GraphQLInt },
     employee_id: { type: GraphQLString },
     battery_id: { type: GraphQLString },
     column_id: { type: GraphQLString },
     elevator_id: { type: GraphQLString },
-    intervention_start_time: { type: GraphQLNonNull(GraphQLInt) },
-    intervention_end_time: { type: GraphQLNonNull(GraphQLInt) },
+    intervention_start_time: { type: GraphQLInt },
+    intervention_end_time: { type: GraphQLInt },
     result: { type: GraphQLString },
     report: { type: GraphQLString },
     status: { type: GraphQLString },
@@ -76,7 +68,7 @@ const AddressType = new GraphQLObjectType({
   name: "Address",
   description: "This is an address",
   fields: () => ({
-    id: { type: GraphQLNonNull(GraphQLInt) },
+    id: { type: GraphQLInt },
     address_type: { type: GraphQLString },
     status: { type: GraphQLString },
     entity: { type: GraphQLString },
@@ -95,7 +87,7 @@ const BuildingType = new GraphQLObjectType({
   name: "Building",
   description: "This is a building",
   fields: () => ({
-    id: { type: GraphQLNonNull(GraphQLInt) },
+    id: { type: GraphQLInt },
     admin_name: { type: GraphQLString },
     admin_email: { type: GraphQLString },
     admin_phone_numer: { type: GraphQLString },
@@ -108,10 +100,10 @@ const BuildingType = new GraphQLObjectType({
 });
 
 const BuildingDetailType = new GraphQLObjectType({
-  name: "Building Details",
+  name: "BuildingDetails",
   description: "This is the building details",
   fields: () => ({
-    id: { type: GraphQLNonNull(GraphQLInt) },
+    id: { type: GraphQLInt },
     information_key: { type: GraphQLString },
     value: { type: GraphQLString },
     building_id: { type: GraphQLInt },
@@ -122,7 +114,7 @@ const CustomerType = new GraphQLObjectType({
   name: "Customer",
   description: "This is a customer",
   fields: () => ({
-    id: { type: GraphQLNonNull(GraphQLInt) },
+    id: { type: GraphQLInt },
     company_name: { type: GraphQLString },
     company_contact_name: { type: GraphQLString },
     contact_phone: { type: GraphQLString },
@@ -140,7 +132,7 @@ const EmployeeType = new GraphQLObjectType({
   name: "Employee",
   description: "This is an employee",
   fields: () => ({
-    id: { type: GraphQLNonNull(GraphQLInt) },
+    id: { type: GraphQLInt },
     first_name: { type: GraphQLString },
     last_name: { type: GraphQLString },
     title: { type: GraphQLString },
@@ -158,13 +150,13 @@ const RootQueryType = new GraphQLObjectType({
       type: InterventionType,
       description: "An intervention",
       args: {
-        id: { type: GraphQLNonNull(GraphQLInt) },
+        id: { type: GraphQLInt },
         employee_id: { type: GraphQLString },
         battery_id: { type: GraphQLString },
         column_id: { type: GraphQLString },
         elevator_id: { type: GraphQLString },
-        intervention_start_time: { type: GraphQLNonNull(GraphQLInt) }, //TODO: not sure if times should be put in Int
-        intervention_end_time: { type: GraphQLNonNull(GraphQLInt) }, //TODO: not sure if times should be put in Int
+        intervention_start_time: { type: GraphQLInt }, //TODO: not sure if times should be put in Int
+        intervention_end_time: { type: GraphQLInt }, //TODO: not sure if times should be put in Int
         result: { type: GraphQLString },
         report: { type: GraphQLString },
         status: { type: GraphQLString },
@@ -186,7 +178,7 @@ const RootQueryType = new GraphQLObjectType({
       type: AddressType,
       description: "An Address",
       args: {
-        id: { type: GraphQLNonNull(GraphQLInt) },
+        id: { type: GraphQLInt },
         address_type: { type: GraphQLString },
         status: { type: GraphQLString },
         entity: { type: GraphQLString },
@@ -206,7 +198,7 @@ const RootQueryType = new GraphQLObjectType({
       type: BuildingType,
       description: "A building",
       args: {
-        id: { type: GraphQLNonNull(GraphQLInt) },
+        id: { type: GraphQLInt },
         admin_name: { type: GraphQLString },
         admin_email: { type: GraphQLString },
         admin_phone_numer: { type: GraphQLString },
@@ -228,7 +220,7 @@ const RootQueryType = new GraphQLObjectType({
       type: BuildingDetailType,
       description: "Building details",
       args: {
-        id: { type: GraphQLNonNull(GraphQLInt) },
+        id: { type: GraphQLInt },
         information_key: { type: GraphQLString },
         value: { type: GraphQLString },
         building_id: { type: GraphQLInt },
@@ -245,7 +237,7 @@ const RootQueryType = new GraphQLObjectType({
       type: CustomerType,
       description: "A customer",
       args: {
-        id: { type: GraphQLNonNull(GraphQLInt) },
+        id: { type: GraphQLInt },
         company_name: { type: GraphQLString },
         company_contact_name: { type: GraphQLString },
         contact_phone: { type: GraphQLString },
@@ -269,7 +261,7 @@ const RootQueryType = new GraphQLObjectType({
       type: EmployeeType,
       description: "An employee",
       args: {
-        id: { type: GraphQLNonNull(GraphQLInt) },
+        id: { type: GraphQLInt },
         first_name: { type: GraphQLString },
         last_name: { type: GraphQLString },
         title: { type: GraphQLString },
@@ -285,6 +277,11 @@ const RootQueryType = new GraphQLObjectType({
       resolve: () => employees,
     },
   }),
+});
+
+//Schema creation
+const schema = new GraphQLSchema({
+  query: RootQueryType,
 });
 
 //Express Server
