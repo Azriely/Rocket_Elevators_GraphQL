@@ -96,6 +96,20 @@ const BuildingType = new GraphQLObjectType({
     tech_phone_number: { type: GraphQLString },
     address_id: { type: GraphQLInt },
     customer_id: { type: GraphQLInt },
+    customer: {
+      type: CustomerType,
+      resolve: (building) => {
+        return customers.find(
+          (customer) => customer_id === building.customer_id
+        );
+      },
+    },
+    address: {
+      type: AddressType,
+      resolve: (building) => {
+        return addresses.find((address) => address_id === building.address_id);
+      },
+    },
   }),
 });
 
@@ -191,8 +205,23 @@ const RootQueryType = new GraphQLObjectType({
         latitude: { type: GraphQLFloat },
         longitude: { type: GraphQLFloat },
       },
-      resolve: (parent, args) =>
-        addresses.find((address) => address.id === args.id),
+      resolve: (parent, args) => {
+        // Make a connection to MySQL and blah...
+        // let result;
+        connection.query(
+          `SELECT * FROM addresses WHERE id = ${args.id}`,
+          (err, res, fields) => {
+            if (err) console.log(err);
+            console.log("========");
+            console.log(res);
+            console.log("+++++++++");
+            console.log(res[0]);
+
+            // console.log(result);
+          }
+        );
+        // return result;
+      },
     },
     building: {
       type: BuildingType,
