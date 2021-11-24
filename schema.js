@@ -2,7 +2,6 @@
 var express = require("express");
 var { graphqlHTTP } = require("express-graphql");
 const {
-  buildSchema,
   GraphQLObjectType,
   GraphQLInt,
   GraphQLList,
