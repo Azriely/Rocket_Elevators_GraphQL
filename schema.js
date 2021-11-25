@@ -167,21 +167,7 @@ const RootQueryType = new GraphQLObjectType({
         id: { type: GraphQLInt },
       },
       resolve: (parent, args) => {
-        // Make a connection to MySQL and blah...
-        // let result;
-        connection.query(
-          `SELECT * FROM interventions WHERE id = ${args.id}`,
-          (err, res, fields) => {
-            if (err) console.log(err);
-            console.log("========");
-            console.log(res);
-            console.log("+++++++++");
-            console.log(res[0]);
-
-            // console.log(result);
-          }
-        );
-        // return result;
+        interventions.find((intervention) => intervention.id === args.id);
       },
     },
     interventions: {
@@ -313,20 +299,19 @@ const RootQueryType = new GraphQLObjectType({
       },
       resolve: (parent, args) => {
         // Make a connection to MySQL and blah...
-        // let result;
-        connection.query(
+        let result = connection.query(
           `SELECT * FROM employees WHERE id = ${args.id}`,
           (err, res, fields) => {
             if (err) console.log(err);
-            console.log("========");
+            console.log("-----------regular res-----------");
             console.log(res);
-            console.log("+++++++++");
+            console.log("-----------res [0] -----------");
             console.log(res[0]);
 
-            // console.log(result);
+            console.log(result);
           }
         );
-        // return result;
+        return result;
       },
     },
     employees: {
