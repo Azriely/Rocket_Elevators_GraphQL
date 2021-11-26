@@ -67,7 +67,7 @@ const InterventionType = new GraphQLObjectType({
   description: "This is an intervention",
   fields: () => ({
     id: { type: GraphQLInt },
-    building_id: { type: BuildingType },
+    building_id: { type: GraphQLString },
     employee_id: { type: GraphQLString },
     battery_id: { type: GraphQLString },
     column_id: { type: GraphQLString },
@@ -77,6 +77,13 @@ const InterventionType = new GraphQLObjectType({
     result: { type: GraphQLString },
     report: { type: GraphQLString },
     status: { type: GraphQLString },
+    building: {
+      type: BuildingType,
+      resolve: async (intervention, args) => {
+        const [rows, fields] = await promisePool.query(`SELECT * FROM buildings WHERE id = ${intervention.building_id}`)
+        return rows[0]
+      },
+    }
   }),
 });
 
@@ -141,8 +148,12 @@ const BuildingType = new GraphQLObjectType({
     },
     address: {
       type: AddressType,
-      resolve: (building) => {
-        return addresses.find((address) => address_id === building.address_id);
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM addresses WHERE id = ${parent.address_id}`
+        );
+        
+        return rows[0];
       },
     },
   }),
