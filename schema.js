@@ -73,6 +73,7 @@ const InterventionType = new GraphQLObjectType({
   description: "This is an intervention",
   fields: () => ({
     id: { type: GraphQLInt },
+    building_id: { type: BuildingType },
     employee_id: { type: GraphQLString },
     battery_id: { type: GraphQLString },
     column_id: { type: GraphQLString },
@@ -101,6 +102,25 @@ const AddressType = new GraphQLObjectType({
     notes: { type: GraphQLString },
     latitude: { type: GraphQLFloat },
     longitude: { type: GraphQLFloat },
+  }),
+});
+
+const BatteryType = new GraphQLObjectType({
+  name: "Battery",
+  description: "This is a battery",
+  fields: () => ({
+    id: { type: GraphQLInt },
+    battery_type: { type: GraphQLString },
+    status: { type: GraphQLString },
+    date_of_commissioning: { type: GraphQLDateTime },
+    date_of_last_inspection: { type: GraphQLDateTime },
+    certificate_of_operations: { type: GraphQLString },
+    information: { type: GraphQLString },
+    notes: { type: GraphQLString },
+    created_at: { type: GraphQLDateTime },
+    updated_at: { type: GraphQLDateTime },
+    building_id: { type: GraphQLInt },
+    employee_id: { type: GraphQLInt },
   }),
 });
 
@@ -189,14 +209,20 @@ const RootQueryType = new GraphQLObjectType({
       args: {
         id: { type: GraphQLInt },
       },
-      resolve: (parent, args) => {
-        interventions.find((intervention) => intervention.id === args.id);
+      resolve: async (parent, args) => {
+        const res = await client.query(`SELECT * FROM fact_interventions WHERE id = ${args.id}`)
+        console.log(res.rows[0]) 
+        return res.rows[0]
       },
     },
     interventions: {
       type: new GraphQLList(InterventionType),
       description: "List of All Interventions",
-      resolve: () => interventions,
+      resolve: async (parent, args) => {
+        const res = await client.query(`SELECT * FROM fact_interventions`)
+        console.log(res.rows) 
+        return res.rows
+      },
     },
     addresses: {
       type: new GraphQLList(AddressType),
