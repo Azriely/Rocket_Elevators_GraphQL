@@ -210,8 +210,8 @@ const RootQueryType = new GraphQLObjectType({
         id: { type: GraphQLInt },
       },
       resolve: (parent, args) => {
-        // Make a connection to MySQL and blah...
-        // let result;
+        // Make a connection to MySQL
+        let result;
         connection.query(
           `SELECT * FROM addresses WHERE id = ${args.id}`,
           (err, res, fields) => {
@@ -224,7 +224,7 @@ const RootQueryType = new GraphQLObjectType({
             // console.log(result);
           }
         );
-        // return result;
+        return result;
       },
     },
     building: {
@@ -234,8 +234,8 @@ const RootQueryType = new GraphQLObjectType({
         id: { type: GraphQLInt },
       },
       resolve: (parent, args) => {
-        // Make a connection to MySQL and blah...
-        // let result;
+        // Make a connection to MySQL
+        let result;
         connection.query(
           `SELECT * FROM buildings WHERE id = ${args.id}`,
           (err, res, fields) => {
@@ -263,8 +263,8 @@ const RootQueryType = new GraphQLObjectType({
         id: { type: GraphQLInt },
       },
       resolve: (parent, args) => {
-        // Make a connection to MySQL and blah...
-        // let result;
+        // Make a connection to MySQL
+        let result;
         connection.query(
           `SELECT * FROM buildingDetails WHERE id = ${args.id}`,
           (err, res, fields) => {
@@ -277,7 +277,7 @@ const RootQueryType = new GraphQLObjectType({
             // console.log(result);
           }
         );
-        // return result;
+        return result;
       },
     },
     buildingDetails: {
@@ -306,7 +306,7 @@ const RootQueryType = new GraphQLObjectType({
             // console.log(result);
           }
         );
-        // return result;
+        return result;
       },
     },
     customers: {
