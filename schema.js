@@ -331,8 +331,8 @@ const RootQueryType = new GraphQLObjectType({
       description: "List of all employees",
       resolve: async (parent, args) => {
         const [rows, fields] = await promisePool.query(`SELECT * FROM employees`);
-        console.log(rows[0])
-        return rows[0];
+        console.log(rows)
+        return rows;
       },
     },
   }),
