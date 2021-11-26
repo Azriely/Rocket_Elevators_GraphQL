@@ -1,6 +1,5 @@
 //Dependencies
 
-
 var express = require("express");
 var { graphqlHTTP } = require("express-graphql");
 const {
@@ -17,19 +16,14 @@ const { GraphQLDateTime } = require("graphql-iso-date");
 const PORT = process.env.PORT || 3000;
 
 //SEQUELIZE
-const { Sequelize, Model, DataTypes } = require('sequelize');
+const { Sequelize, Model, DataTypes } = require("sequelize");
 
-const sequelize = new Sequelize('dominhannguyen', 'codeboxx', 'Codeboxx1!', {
-  host: 'codeboxx.cq6zrczewpu2.us-east-1.rds.amazonaws.com',
-  dialect: 'mysql',
+const sequelize = new Sequelize("dominhannguyen", "codeboxx", "Codeboxx1!", {
+  host: "codeboxx.cq6zrczewpu2.us-east-1.rds.amazonaws.com",
+  dialect: "mysql",
 });
 
-const Employee = sequelize.define('employee', {
-
-})
-
-
-
+const Employee = sequelize.define("employee", {});
 
 //POSTGRES
 const { Client } = require("pg");
@@ -58,7 +52,7 @@ var connection = mysql.createConnection({
   database: "dominhannguyen",
 });
 
-let promisePool = connection.promise()
+let promisePool = connection.promise();
 //connection.connect(function (error) {
 //   if (!!error) {
 //     console.log("Can't connect to mySQL database.");
@@ -227,7 +221,13 @@ const RootQueryType = new GraphQLObjectType({
     addresses: {
       type: new GraphQLList(AddressType),
       description: "List of All Addresses",
-      resolve: () => addresses,
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM addresses`
+        );
+        console.log(rows);
+        return rows;
+      },
     },
     address: {
       type: AddressType,
@@ -235,22 +235,12 @@ const RootQueryType = new GraphQLObjectType({
       args: {
         id: { type: GraphQLInt },
       },
-      resolve: (parent, args) => {
-        // Make a connection to MySQL
-        let result;
-        connection.query(
-          `SELECT * FROM addresses WHERE id = ${args.id}`,
-          (err, res, fields) => {
-            if (err) console.log(err);
-            console.log("========");
-            console.log(res);
-            console.log("+++++++++");
-            console.log(res[0]);
-
-            // console.log(result);
-          }
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM addresses WHERE id = ${args.id}`
         );
-        return result;
+        console.log(rows[0]);
+        return rows[0];
       },
     },
     building: {
@@ -259,28 +249,24 @@ const RootQueryType = new GraphQLObjectType({
       args: {
         id: { type: GraphQLInt },
       },
-      resolve: (parent, args) => {
-        // Make a connection to MySQL
-        let result;
-        connection.query(
-          `SELECT * FROM buildings WHERE id = ${args.id}`,
-          (err, res, fields) => {
-            if (err) console.log(err);
-            console.log("========");
-            console.log(res);
-            console.log("+++++++++");
-            console.log(res[0]);
-
-            // console.log(result);
-          }
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM buildings WHERE id = ${args.id}`
         );
-        return result;
+        console.log(rows[0]);
+        return rows[0];
       },
     },
     buildings: {
       type: new GraphQLList(BuildingType),
       description: "List of all buildings",
-      resolve: () => buildings,
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM buildings`
+        );
+        console.log(rows);
+        return rows;
+      },
     },
     buildingDetail: {
       type: BuildingDetailType,
@@ -288,28 +274,24 @@ const RootQueryType = new GraphQLObjectType({
       args: {
         id: { type: GraphQLInt },
       },
-      resolve: (parent, args) => {
-        // Make a connection to MySQL
-        let result;
-        connection.query(
-          `SELECT * FROM buildingDetails WHERE id = ${args.id}`,
-          (err, res, fields) => {
-            if (err) console.log(err);
-            console.log("========");
-            console.log(res);
-            console.log("+++++++++");
-            console.log(res[0]);
-
-            // console.log(result);
-          }
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM buildingDetails WHERE id = ${args.id}`
         );
-        return result;
+        console.log(rows[0]);
+        return rows[0];
       },
     },
     buildingDetails: {
       type: new GraphQLList(BuildingDetailType),
       description: "List of all building details",
-      resolve: () => buildingDetails,
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM buildingDetails`
+        );
+        console.log(rows);
+        return rows;
+      },
     },
     customer: {
       type: CustomerType,
@@ -317,28 +299,24 @@ const RootQueryType = new GraphQLObjectType({
       args: {
         id: { type: GraphQLInt },
       },
-      resolve: (parent, args) => {
-        // Make a connection to MySQL and blah...
-        // let result;
-           connection.query(
-          `SELECT * FROM customers WHERE id = ${args.id}`,
-          (err, res, fields) => {
-            if (err) console.log(err);
-            console.log("========");
-            console.log(res);
-            console.log("+++++++++");
-            console.log(res[0]);
-
-            // console.log(result);
-          }
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM customers WHERE id = ${args.id}`
         );
-        return result;
+        console.log(rows[0]);
+        return rows[0];
       },
     },
     customers: {
       type: new GraphQLList(CustomerType),
       description: "List of all customers",
-      resolve: () => customers,
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM customers`
+        );
+        console.log(rows);
+        return rows;
+      },
     },
     employee: {
       type: EmployeeType,
@@ -347,8 +325,10 @@ const RootQueryType = new GraphQLObjectType({
         id: { type: GraphQLInt },
       },
       resolve: async (parent, args) => {
-        const [rows, fields] = await promisePool.query(`SELECT * FROM employees WHERE id = ${args.id}`);
-        console.log(rows[0])
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM employees WHERE id = ${args.id}`
+        );
+        console.log(rows[0]);
         return rows[0];
       },
     },
@@ -356,8 +336,10 @@ const RootQueryType = new GraphQLObjectType({
       type: new GraphQLList(EmployeeType),
       description: "List of all employees",
       resolve: async (parent, args) => {
-        const [rows, fields] = await promisePool.query(`SELECT * FROM employees`);
-        console.log(rows)
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM employees`
+        );
+        console.log(rows);
         return rows;
       },
     },
