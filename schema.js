@@ -1,4 +1,6 @@
 //Dependencies
+
+
 var express = require("express");
 var { graphqlHTTP } = require("express-graphql");
 const {
@@ -14,6 +16,21 @@ const { GraphQLDateTime } = require("graphql-iso-date");
 
 const PORT = process.env.PORT || 3000;
 
+//SEQUELIZE
+const { Sequelize, Model, DataTypes } = require('sequelize');
+
+const sequelize = new Sequelize('dominhannguyen', 'codeboxx', 'Codeboxx1!', {
+  host: 'codeboxx.cq6zrczewpu2.us-east-1.rds.amazonaws.com',
+  dialect: 'mysql',
+});
+
+const Employee = sequelize.define('employee', {
+
+})
+
+
+
+
 //POSTGRES
 const { Client } = require("pg");
 const client = new Client({
@@ -22,6 +39,7 @@ const client = new Client({
   password: "Codeboxx1!",
   database: "dominhannguyen",
 });
+
 client.connect(function (error) {
   if (!!error) {
     console.log("Can't connect to PSQL database.");
@@ -31,20 +49,23 @@ client.connect(function (error) {
 });
 
 //MYSQL
-var mysql = require("mysql");
+var mysql = require("mysql2");
+const { json } = require("express");
 var connection = mysql.createConnection({
   host: "codeboxx.cq6zrczewpu2.us-east-1.rds.amazonaws.com",
   user: "codeboxx",
   password: "Codeboxx1!",
   database: "dominhannguyen",
 });
-connection.connect(function (error) {
-  if (!!error) {
-    console.log("Can't connect to mySQL database.");
-  } else {
-    console.log("Connected to mySQL database.");
-  }
-});
+
+let promisePool = connection.promise()
+//connection.connect(function (error) {
+//   if (!!error) {
+//     console.log("Can't connect to mySQL database.");
+//   } else {
+//     console.log("Connected to mySQL database.");
+//   }
+// });
 
 //Type creation
 const InterventionType = new GraphQLObjectType({
@@ -151,6 +172,8 @@ const EmployeeType = new GraphQLObjectType({
     last_name: { type: GraphQLString },
     title: { type: GraphQLString },
     email: { type: GraphQLString },
+    //created_at: { type: },
+    //updated_at: {type: },
     user_id: { type: GraphQLInt },
   }),
 });
@@ -271,7 +294,7 @@ const RootQueryType = new GraphQLObjectType({
       resolve: (parent, args) => {
         // Make a connection to MySQL and blah...
         // let result;
-        connection.query(
+           connection.query(
           `SELECT * FROM customers WHERE id = ${args.id}`,
           (err, res, fields) => {
             if (err) console.log(err);
@@ -297,27 +320,20 @@ const RootQueryType = new GraphQLObjectType({
       args: {
         id: { type: GraphQLInt },
       },
-      resolve: (parent, args) => {
-        // Make a connection to MySQL and blah...
-        let result = connection.query(
-          `SELECT * FROM employees WHERE id = ${args.id}`,
-          (err, res, fields) => {
-            if (err) console.log(err);
-            console.log("-----------regular res-----------");
-            console.log(res);
-            console.log("-----------res [0] -----------");
-            console.log(res[0]);
-
-            console.log(result);
-          }
-        );
-        return result;
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(`SELECT * FROM employees WHERE id = ${args.id}`);
+        console.log(rows[0])
+        return rows[0];
       },
     },
     employees: {
       type: new GraphQLList(EmployeeType),
       description: "List of all employees",
-      resolve: () => employees,
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(`SELECT * FROM employees`);
+        console.log(rows[0])
+        return rows[0];
+      },
     },
   }),
 });
