@@ -124,6 +124,16 @@ const BatteryType = new GraphQLObjectType({
     updated_at: { type: GraphQLDateTime },
     building_id: { type: GraphQLInt },
     employee_id: { type: GraphQLInt },
+    building: {
+      type: BuildingType,
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM buildings WHERE id = ${parent.building_id}`
+        );
+        
+        return rows[0];
+      },
+    }
   }),
 });
 
@@ -148,8 +158,7 @@ const BuildingType = new GraphQLObjectType({
         );
 
         return rows[0];
-      },
-    },
+    }},
     address: {
       type: AddressType,
       resolve: async (parent, args) => {
@@ -160,13 +169,22 @@ const BuildingType = new GraphQLObjectType({
         return rows[0];
       },
     },
-    interventions: {
-      type: new GraphQLList(InterventionType),
+    buildingDetails: {
+      type: new GraphQLList(BuildingDetailType) ,
       resolve: async (parent, args) => {
-        const res = await client.query(
-          `SELECT * FROM fact_interventions WHERE id > 0 AND building_id = ${parent.id}`
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM building_details WHERE building_id = ${parent.id}`
         );
-        return res.rows;
+        
+        return rows;
+      },
+    },
+    interventions: {
+      type: new GraphQLList(InterventionType) ,
+      resolve: async (parent, args) => {
+        const res = await client.query(`SELECT * FROM fact_interventions WHERE building_id = ${parent.id}`)
+        console.log(res.rows) 
+        return res.rows
       },
     },
   }),
@@ -213,6 +231,16 @@ const EmployeeType = new GraphQLObjectType({
     //created_at: { type: },
     //updated_at: {type: },
     user_id: { type: GraphQLInt },
+    batteries: {
+      type: new GraphQLList(BatteryType),
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM batteries WHERE employee_id = ${parent.id}`
+        );
+        console.log(rows);
+        return rows;
+      },
+    }
   }),
 });
 

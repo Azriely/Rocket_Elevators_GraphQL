@@ -6,6 +6,8 @@
         id
         interventions {
           id
+          status
+          
         }
         
         buildingDetails {

@@ -12,6 +12,9 @@
     }
     interventions {
       id
+      status
+      intervention_start_time
+      intervention_end_time
     }
   } 
 }
