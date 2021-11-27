@@ -6,7 +6,7 @@ const {
   GraphQLObjectType,
   GraphQLInt,
   GraphQLList,
-  GraphQLNonNull, //TODO: Can't get NonNull to work yet, so not being used atm.
+  GraphQLNonNull,
   GraphQLSchema,
   GraphQLString,
   GraphQLFloat,
@@ -80,10 +80,12 @@ const InterventionType = new GraphQLObjectType({
     building: {
       type: BuildingType,
       resolve: async (intervention, args) => {
-        const [rows, fields] = await promisePool.query(`SELECT * FROM buildings WHERE id = ${intervention.building_id}`)
-        return rows[0]
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM buildings WHERE id = ${intervention.building_id}`
+        );
+        return rows[0];
       },
-    }
+    },
   }),
 });
 
@@ -163,7 +165,7 @@ const BuildingType = new GraphQLObjectType({
         const [rows, fields] = await promisePool.query(
           `SELECT * FROM addresses WHERE id = ${parent.address_id}`
         );
-        
+
         return rows[0];
       },
     },
@@ -254,18 +256,20 @@ const RootQueryType = new GraphQLObjectType({
         id: { type: GraphQLInt },
       },
       resolve: async (parent, args) => {
-        const res = await client.query(`SELECT * FROM fact_interventions WHERE id = ${args.id}`)
-        console.log(res.rows[0]) 
-        return res.rows[0]
+        const res = await client.query(
+          `SELECT * FROM fact_interventions WHERE id = ${args.id}`
+        );
+        console.log(res.rows[0]);
+        return res.rows[0];
       },
     },
     interventions: {
       type: new GraphQLList(InterventionType),
       description: "List of All Interventions",
       resolve: async (parent, args) => {
-        const res = await client.query(`SELECT * FROM fact_interventions`)
-        console.log(res.rows) 
-        return res.rows
+        const res = await client.query(`SELECT * FROM fact_interventions`);
+        console.log(res.rows);
+        return res.rows;
       },
     },
     addresses: {
