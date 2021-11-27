@@ -61,5 +61,26 @@ Retrieval of all interventions carried out by a specified employee with the buil
 Query 3:
 
 ```
+{
+	employee(id:2) {
+    batteries {
+      id
+      building {
+        id
+        interventions {
+          id
+          status
+          
+        }
+        
+        buildingDetails {
+          information_key
+          value
+        }
+      }
+    }
+  }
+}
+
 
 ```
