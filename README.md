@@ -12,6 +12,7 @@ Retrieving the address of the building, the beginning and the end of the interve
 Query 1:
 
 ```
+
 {
   intervention(id: 1) {
     id
@@ -36,20 +37,21 @@ Retrieving customer information and the list of interventions that took place fo
 Query 2:
 
 ```
+
 {
-  building(id:1) {
-    customer {
-      company_name
-    	company_contact_name
-   	 	contact_email
-      company_description
-    	service_tech_name
-    	service_tech_phone
-    	service_tech_email
-    	address_id
-    }
-    interventions {
-      building_id
+  intervention(id: 1) {
+    id
+  	intervention_start_time
+    intervention_end_time
+    status
+    building {
+      address {
+        number_and_street
+        suite_and_apartment
+        city
+        postal_code
+        country
+      }
     }
   }
 }
