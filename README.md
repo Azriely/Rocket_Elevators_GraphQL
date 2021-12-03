@@ -2,10 +2,7 @@
 
 Implemented using Node.js and Express to deploy this GraphQL API on Heroku. Here is the website https://rocket-elevators-graph.herokuapp.com/graphql
 
-GraphQL API Team:
-Matthew Dandurand
-Do Minh An Nguyen
-Jacob Gomez
+Instruction for calling Qureies:
 
 Question 1:
 Retrieving the address of the building, the beginning and the end of the intervention for a specific intervention.
