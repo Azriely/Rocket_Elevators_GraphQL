@@ -74,8 +74,8 @@ const InterventionType = new GraphQLObjectType({
     elevator_id: { type: GraphQLString },
     intervention_start_time: { type: GraphQLDateTime },
     intervention_end_time: { type: GraphQLDateTime },
-    start_date: { type: GraphQLDateTime },
-    end_date: { type: GraphQLDateTime },
+    intervention_start: { type: GraphQLDateTime },
+    intervention_end: { type: GraphQLDateTime },
     result: { type: GraphQLString },
     report: { type: GraphQLString },
     status: { type: GraphQLString },
@@ -252,7 +252,7 @@ const RootMutationType = new GraphQLObjectType({
   name: 'Mutation',
   description: 'Root Mutation',
   fields: () => ({
-    update_intervention_start_date: {
+    update_intervention_intervention_start: {
       type: InterventionType,
       description: "Update new Intervention Type",
       args: {
@@ -266,7 +266,7 @@ const RootMutationType = new GraphQLObjectType({
         );
         const intervention = rows[0]
         intervention.status = 'InProgress'
-        intervention.start_date = new Date()
+        intervention.intervention_start = new Date()
         
        
       
@@ -278,7 +278,7 @@ const RootMutationType = new GraphQLObjectType({
        
         await promisePool.query(
           `UPDATE interventions
-          SET status = '${intervention.status}', start_date = '${today}'
+          SET status = '${intervention.status}', intervention_start = '${today}'
           WHERE id = ${args.id};
           `
         );
@@ -286,7 +286,7 @@ const RootMutationType = new GraphQLObjectType({
         return intervention
       }
     },
-    update_intervention_end_date: {
+    update_intervention_intervention_end: {
       type: InterventionType,
       description: "Update new Intervention Type",
       args: {
@@ -300,7 +300,7 @@ const RootMutationType = new GraphQLObjectType({
         );
         const intervention = rows[0]
         intervention.status = 'Completed'
-        intervention.start_date = new Date()
+        intervention.intervention_start = new Date()
         
        
       
@@ -312,7 +312,7 @@ const RootMutationType = new GraphQLObjectType({
        
         await promisePool.query(
           `UPDATE interventions
-          SET status = '${intervention.status}', end_date = '${today}'
+          SET status = '${intervention.status}', intervention_end = '${today}'
           WHERE id = ${args.id};
           `
         );
@@ -356,7 +356,7 @@ const RootQueryType = new GraphQLObjectType({
       description: "List of All Pending Interventions",
       resolve: async (parent, args) => {
         const [rows, fields] = await promisePool.query(
-          `SELECT * FROM interventions WHERE end_date IS NULL AND status = 'Pending'`
+          `SELECT * FROM interventions WHERE intervention_end IS NULL AND status = 'Pending'`
         );
         console.log(rows)
         return rows;
