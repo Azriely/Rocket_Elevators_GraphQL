@@ -13,8 +13,8 @@ Query 1:
  pending_interventions {
  	id
 	status
-	start_date
-	end_date
+	intervention_start
+	intervention_end
  }
 }
 ```
@@ -28,8 +28,8 @@ mutation {
 	 update_intervention_start_date(id: 7) {
 		id
 		status
-		start_date
-		end_date
+		intervention_start
+		intervention_end
 	 }
 }
 ```
@@ -43,8 +43,8 @@ mutation {
 	 update_intervention_end_date(id: 7) {
 		id
 		status
-		start_date
-		end_date
+		intervention_start
+		intervention_end
 	 }
 }
 ```
