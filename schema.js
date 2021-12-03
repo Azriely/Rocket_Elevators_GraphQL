@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 3000;
 //SEQUELIZE
 const { Sequelize, Model, DataTypes } = require("sequelize");
 
-const sequelize = new Sequelize("dominhannguyen", "codeboxx", "Codeboxx1!", {
+const sequelize = new Sequelize("MatthewDandurand", "codeboxx", "Codeboxx1!", {
   host: "codeboxx.cq6zrczewpu2.us-east-1.rds.amazonaws.com",
   dialect: "mysql",
 });
@@ -31,7 +31,7 @@ const client = new Client({
   host: "codeboxx-postgresql.cq6zrczewpu2.us-east-1.rds.amazonaws.com",
   user: "codeboxx",
   password: "Codeboxx1!",
-  database: "dominhannguyen",
+  database: "MatthewDandurand",
 });
 
 client.connect(function (error) {
@@ -49,7 +49,7 @@ var connection = mysql.createConnection({
   host: "codeboxx.cq6zrczewpu2.us-east-1.rds.amazonaws.com",
   user: "codeboxx",
   password: "Codeboxx1!",
-  database: "dominhannguyen",
+  database: "MatthewDandurand",
 });
 
 let promisePool = connection.promise();
@@ -74,6 +74,8 @@ const InterventionType = new GraphQLObjectType({
     elevator_id: { type: GraphQLString },
     intervention_start_time: { type: GraphQLDateTime },
     intervention_end_time: { type: GraphQLDateTime },
+    start_date: { type: GraphQLDateTime },
+    end_date: { type: GraphQLDateTime },
     result: { type: GraphQLString },
     report: { type: GraphQLString },
     status: { type: GraphQLString },
@@ -237,12 +239,89 @@ const EmployeeType = new GraphQLObjectType({
         const [rows, fields] = await promisePool.query(
           `SELECT * FROM batteries WHERE employee_id = ${parent.id}`
         );
-        console.log(rows);
+        
         return rows;
       },
     }
   }),
 });
+
+//Mutation
+
+const RootMutationType = new GraphQLObjectType({
+  name: 'Mutation',
+  description: 'Root Mutation',
+  fields: () => ({
+    update_intervention_start_date: {
+      type: InterventionType,
+      description: "Update new Intervention Type",
+      args: {
+        id: {
+          type: new GraphQLNonNull(GraphQLInt)
+        }
+      },
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM interventions WHERE id = ${args.id}`
+        );
+        const intervention = rows[0]
+        intervention.status = 'InProgress'
+        intervention.start_date = new Date()
+        
+       
+      
+        var today = new Date();
+        var year = String(today.getFullYear())
+        var month = String(today.getMonth() + 1)
+        var day = String(today.getDate())
+        var today = year + '-' +  month + '-'+ day
+       
+        await promisePool.query(
+          `UPDATE interventions
+          SET status = '${intervention.status}', start_date = '${today}'
+          WHERE id = ${args.id};
+          `
+        );
+
+        return intervention
+      }
+    },
+    update_intervention_end_date: {
+      type: InterventionType,
+      description: "Update new Intervention Type",
+      args: {
+        id: {
+          type: new GraphQLNonNull(GraphQLInt)
+        }
+      },
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM interventions WHERE id = ${args.id}`
+        );
+        const intervention = rows[0]
+        intervention.status = 'Completed'
+        intervention.start_date = new Date()
+        
+       
+      
+        var today = new Date();
+        var year = String(today.getFullYear())
+        var month = String(today.getMonth() + 1)
+        var day = String(today.getDate())
+        var today = year + '-' +  month + '-'+ day
+       
+        await promisePool.query(
+          `UPDATE interventions
+          SET status = '${intervention.status}', end_date = '${today}'
+          WHERE id = ${args.id};
+          `
+        );
+
+        return intervention
+      }
+    }
+  })
+})
 
 //Queries
 const RootQueryType = new GraphQLObjectType({
@@ -270,6 +349,17 @@ const RootQueryType = new GraphQLObjectType({
         const res = await client.query(`SELECT * FROM fact_interventions`);
         console.log(res.rows);
         return res.rows;
+      },
+    },
+    pending_interventions: {
+      type: new GraphQLList(InterventionType),
+      description: "List of All Pending Interventions",
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM interventions WHERE end_date IS NULL AND status = 'Pending'`
+        );
+        console.log(rows)
+        return rows;
       },
     },
     addresses: {
@@ -403,6 +493,7 @@ const RootQueryType = new GraphQLObjectType({
 //Schema creation
 const schema = new GraphQLSchema({
   query: RootQueryType,
+  mutation: RootMutationType
 });
 
 //Express Server
