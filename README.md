@@ -14,22 +14,14 @@ Query 1:
 ```
 
 {
-  intervention(id: 1) {
-    id
-  	intervention_start_time
-    intervention_end_time
-    status
-    building {
-      address {
-        number_and_street
-        suite_and_apartment
-        city
-        postal_code
-        country
-      }
-    }
-  }
+ pending_interventions {
+ 	id
+	status
+	start_date
+	end_date
+ }
 }
+
 ```
 
 Question 2:
@@ -37,26 +29,17 @@ Retrieving customer information and the list of interventions that took place fo
 Query 2:
 
 ```
-{
-  building(id:1) {
-    customer {
-      company_name
-      company_contact_name
-   	  contact_email
-      company_description
-      service_tech_name
-      service_tech_phone
-      service_tech_email
-      address_id
-    }
-    interventions {
-      id
-      status
-      intervention_start_time
-      intervention_end_time
-    }
-  } 
+mutation {	
+	 update_intervention_start_date(id: 7) {
+		id
+		status
+		start_date
+		end_date
+	 }
 }
+
+
+
 
 
 ```
@@ -66,26 +49,13 @@ Retrieval of all interventions carried out by a specified employee with the buil
 Query 3:
 
 ```
-{
-	employee(id:2) {
-    batteries {
-      id
-      building {
-        id
-        interventions {
-          id
-          status
-          
-        }
-        
-        buildingDetails {
-          information_key
-          value
-        }
-      }
-    }
-  }
+mutation {	
+	 update_intervention_end_date(id: 7) {
+		id
+		status
+		start_date
+		end_date
+	 }
 }
-
 
 ```
