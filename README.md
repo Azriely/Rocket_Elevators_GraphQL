@@ -12,7 +12,6 @@ Retrieving the address of the building, the beginning and the end of the interve
 Query 1:
 
 ```
-
 {
  pending_interventions {
  	id
@@ -21,7 +20,6 @@ Query 1:
 	end_date
  }
 }
-
 ```
 
 Question 2:
@@ -37,11 +35,6 @@ mutation {
 		end_date
 	 }
 }
-
-
-
-
-
 ```
 
 Question 3:
@@ -57,5 +50,4 @@ mutation {
 		end_date
 	 }
 }
-
 ```
