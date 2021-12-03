@@ -1,6 +1,6 @@
 # Rocket_Elevators_GraphQL
 
-Implemented using Node.js and Express to deploy this GraphQL API on Heroku. Here is the website https://rocket-elevators-graph.herokuapp.com/graphql
+Implemented using Node.js and Express to deploy this GraphQL API on Heroku. Here is the URL https://rocket-elevators-graph.herokuapp.com/graphql
 
 Instruction for calling Qureies:
 
