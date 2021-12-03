@@ -25,7 +25,7 @@ Query 2:
 
 ```
 mutation {	
-	 update_intervention_start_date(id: 7) {
+	 update_intervention_intervention_start(id: 1) {
 		id
 		status
 		intervention_start
@@ -40,7 +40,7 @@ Query 3:
 
 ```
 mutation {	
-	 update_intervention_end_date(id: 7) {
+	 update_intervention_intervention_end(id: 1) {
 		id
 		status
 		intervention_start
