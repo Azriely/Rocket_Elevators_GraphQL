@@ -5,7 +5,7 @@ Implemented using Node.js and Express to deploy this GraphQL API on Heroku. Here
 Instruction for calling Qureies:
 
 Question 1:
-Retrieving the address of the building, the beginning and the end of the intervention for a specific intervention.
+Retrieving current pending interventions with start and end time stamps.
 Query 1:
 
 ```
@@ -20,7 +20,7 @@ Query 1:
 ```
 
 Question 2:
-Retrieving customer information and the list of interventions that took place for a specific building
+Retrieving Intervention info for a specific Interventiong (id: 1 in this example) and modifying the start date.
 Query 2:
 
 ```
@@ -35,7 +35,7 @@ mutation {
 ```
 
 Question 3:
-Retrieval of all interventions carried out by a specified employee with the buildings associated with these interventions including the details (Table BuildingDetails) associated with these buildings.
+Retrieving Intervention info for a specific Interventiong (id: 1 in this example) and modifying the end date.
 Query 3:
 
 ```
