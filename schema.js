@@ -132,10 +132,10 @@ const BatteryType = new GraphQLObjectType({
         const [rows, fields] = await promisePool.query(
           `SELECT * FROM buildings WHERE id = ${parent.building_id}`
         );
-        
+
         return rows[0];
       },
-    }
+    },
   }),
 });
 
@@ -160,7 +160,9 @@ const BuildingType = new GraphQLObjectType({
         );
 
         return rows[0];
-    }},
+      },
+    },
+
     address: {
       type: AddressType,
       resolve: async (parent, args) => {
@@ -172,21 +174,79 @@ const BuildingType = new GraphQLObjectType({
       },
     },
     buildingDetails: {
-      type: new GraphQLList(BuildingDetailType) ,
+      type: new GraphQLList(BuildingDetailType),
       resolve: async (parent, args) => {
         const [rows, fields] = await promisePool.query(
           `SELECT * FROM building_details WHERE building_id = ${parent.id}`
         );
-        
+
         return rows;
       },
     },
     interventions: {
-      type: new GraphQLList(InterventionType) ,
+      type: new GraphQLList(InterventionType),
       resolve: async (parent, args) => {
-        const res = await client.query(`SELECT * FROM fact_interventions WHERE building_id = ${parent.id}`)
-        console.log(res.rows) 
-        return res.rows
+        const res = await client.query(
+          `SELECT * FROM fact_interventions WHERE building_id = ${parent.id}`
+        );
+        console.log(res.rows);
+        return res.rows;
+      },
+    },
+  }),
+});
+
+const ColumnType = new GraphQLObjectType({
+  name: "Column",
+  description: "This is a column",
+  fields: () => ({
+    id: { type: GraphQLInt },
+    column_type: { type: GraphQLString },
+    number_of_floor: { type: GraphQLInt },
+    status: { type: GraphQLString },
+    information: { type: GraphQLString },
+    notes: { type: GraphQLString },
+    created_at: { type: GraphQLDateTime },
+    updated_at: { type: GraphQLDateTime },
+    tech_phone_number: { type: GraphQLString },
+    battery_id: { type: GraphQLInt },
+    battery: {
+      type: BatteryType,
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM batteries WHERE id = ${parent.building_id}`
+        );
+
+        return rows[0];
+      },
+    },
+  }),
+});
+
+const ElevatorType = new GraphQLObjectType({
+  name: "Elevator",
+  description: "This is an elevator",
+  fields: () => ({
+    id: { type: GraphQLInt },
+    serial_number: { type: GraphQLString },
+    model: { type: GraphQLInt },
+    elevator_type: { type: GraphQLString },
+    status: { type: GraphQLString },
+    date_of_commissioning: { type: GraphQLDateTime },
+    date_of_last_inspection: { type: GraphQLDateTime },
+    certificate_of_inspection: { type: GraphQLString },
+    notes: { type: GraphQLString },
+    created_at: { type: GraphQLDateTime },
+    updated_at: { type: GraphQLDateTime },
+    column_id: { type: GraphQLInt },
+    column: {
+      type: ColumnType,
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM columns WHERE id = ${parent.building_id}`
+        );
+
+        return rows[0];
       },
     },
   }),
@@ -230,8 +290,6 @@ const EmployeeType = new GraphQLObjectType({
     last_name: { type: GraphQLString },
     title: { type: GraphQLString },
     email: { type: GraphQLString },
-    //created_at: { type: },
-    //updated_at: {type: },
     user_id: { type: GraphQLInt },
     batteries: {
       type: new GraphQLList(BatteryType),
@@ -239,14 +297,14 @@ const EmployeeType = new GraphQLObjectType({
         const [rows, fields] = await promisePool.query(
           `SELECT * FROM batteries WHERE employee_id = ${parent.id}`
         );
-        
+
         return rows;
       },
-    }
+    },
   }),
 });
 
-//Mutation
+//Mutation++++++++++++
 
 const RootMutationType = new GraphQLObjectType({
   name: 'Mutation',
@@ -358,7 +416,7 @@ const RootQueryType = new GraphQLObjectType({
         const [rows, fields] = await promisePool.query(
           `SELECT * FROM interventions WHERE intervention_end IS NULL AND status = 'Pending'`
         );
-        console.log(rows)
+        console.log(rows);
         return rows;
       },
     },
@@ -482,6 +540,79 @@ const RootQueryType = new GraphQLObjectType({
       resolve: async (parent, args) => {
         const [rows, fields] = await promisePool.query(
           `SELECT * FROM employees`
+        );
+        console.log(rows);
+        return rows;
+      },
+    },
+    battery: {
+      type: BatteryType,
+      description: "A battery",
+      args: {
+        id: { type: GraphQLInt },
+      },
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM batteries WHERE id = ${args.id}`
+        );
+        console.log(rows[0]);
+        return rows[0];
+      },
+    },
+    batteries: {
+      type: new GraphQLList(BatteryType),
+      description: "List of all batteries",
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM batteries`
+        );
+        console.log(rows);
+        return rows;
+      },
+    },
+    column: {
+      type: ColumnType,
+      description: "A column",
+      args: {
+        id: { type: GraphQLInt },
+      },
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM columns WHERE id = ${args.id}`
+        );
+        console.log(rows[0]);
+        return rows[0];
+      },
+    },
+    columns: {
+      type: new GraphQLList(ColumnType),
+      description: "List of all column",
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(`SELECT * FROM columns`);
+        console.log(rows);
+        return rows;
+      },
+    },
+    elevator: {
+      type: ElevatorType,
+      description: "An elevator",
+      args: {
+        id: { type: GraphQLInt },
+      },
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM elevators WHERE id = ${args.id}`
+        );
+        console.log(rows[0]);
+        return rows[0];
+      },
+    },
+    elevators: {
+      type: new GraphQLList(ElevatorType),
+      description: "List of all elevators",
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM elevators`
         );
         console.log(rows);
         return rows;
