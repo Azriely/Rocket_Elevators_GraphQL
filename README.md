@@ -1,11 +1,11 @@
 # Rocket_Elevators_GraphQL
 
-Implemented using Node.js and Express to deploy this GraphQL API on Heroku. Here is the website https://rocket-elevators-graph.herokuapp.com/graphql
+Implemented using Node.js and Express to deploy this GraphQL API on Heroku. Here is the URL https://rocket-elevators-graph.herokuapp.com/graphql
 
 Instruction for calling Qureies:
 
 Question 1:
-Retrieving the address of the building, the beginning and the end of the intervention for a specific intervention.
+Retrieving current pending interventions with start and end time stamps.
 Query 1:
 
 ```
@@ -13,38 +13,38 @@ Query 1:
  pending_interventions {
  	id
 	status
-	start_date
-	end_date
+	intervention_start
+	intervention_end
  }
 }
 ```
 
 Question 2:
-Retrieving customer information and the list of interventions that took place for a specific building
+Retrieving Intervention info for a specific Interventiong (id: 1 in this example) and modifying the start date.
 Query 2:
 
 ```
 mutation {	
-	 update_intervention_start_date(id: 7) {
+	 update_intervention_intervention_start(id: 1) {
 		id
 		status
-		start_date
-		end_date
+		intervention_start
+		intervention_end
 	 }
 }
 ```
 
 Question 3:
-Retrieval of all interventions carried out by a specified employee with the buildings associated with these interventions including the details (Table BuildingDetails) associated with these buildings.
+Retrieving Intervention info for a specific Interventiong (id: 1 in this example) and modifying the end date.
 Query 3:
 
 ```
 mutation {	
-	 update_intervention_end_date(id: 7) {
+	 update_intervention_intervention_end(id: 1) {
 		id
 		status
-		start_date
-		end_date
+		intervention_start
+		intervention_end
 	 }
 }
 ```
