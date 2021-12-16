@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 3000;
 //SEQUELIZE
 const { Sequelize, Model, DataTypes } = require("sequelize");
 
-const sequelize = new Sequelize("MatthewDandurand", "codeboxx", "Codeboxx1!", {
+const sequelize = new Sequelize("jacobgomez", "codeboxx", "Codeboxx1!", {
   host: "codeboxx.cq6zrczewpu2.us-east-1.rds.amazonaws.com",
   dialect: "mysql",
 });
@@ -31,7 +31,7 @@ const client = new Client({
   host: "codeboxx-postgresql.cq6zrczewpu2.us-east-1.rds.amazonaws.com",
   user: "codeboxx",
   password: "Codeboxx1!",
-  database: "MatthewDandurand",
+  database: "jacobgomez",
 });
 
 client.connect(function (error) {
@@ -49,17 +49,10 @@ var connection = mysql.createConnection({
   host: "codeboxx.cq6zrczewpu2.us-east-1.rds.amazonaws.com",
   user: "codeboxx",
   password: "Codeboxx1!",
-  database: "MatthewDandurand",
+  database: "jacobgomez",
 });
 
 let promisePool = connection.promise();
-//connection.connect(function (error) {
-//   if (!!error) {
-//     console.log("Can't connect to mySQL database.");
-//   } else {
-//     console.log("Connected to mySQL database.");
-//   }
-// });
 
 //Type creation
 const InterventionType = new GraphQLObjectType({
@@ -136,6 +129,16 @@ const BatteryType = new GraphQLObjectType({
         return rows[0];
       },
     },
+    columns: {
+      type: new GraphQLList(ColumnType),
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM columns WHERE id = ${parent.id}`
+        );
+
+        return rows;
+      },
+    },
   }),
 });
 
@@ -171,6 +174,16 @@ const BuildingType = new GraphQLObjectType({
         );
 
         return rows[0];
+      },
+    },
+    batteries: {
+      type: new GraphQLList(BatteryType),
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM batteries WHERE id = ${parent.id}`
+        );
+
+        return rows;
       },
     },
     buildingDetails: {
@@ -218,6 +231,16 @@ const ColumnType = new GraphQLObjectType({
         );
 
         return rows[0];
+      },
+    },
+    elevators: {
+      type: new GraphQLList(ElevatorType),
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM elevators WHERE id = ${parent.id}`
+        );
+
+        return rows;
       },
     },
   }),
@@ -278,6 +301,36 @@ const CustomerType = new GraphQLObjectType({
     service_tech_email: { type: GraphQLString },
     address_id: { type: GraphQLInt },
     user_id: { type: GraphQLInt },
+    buildings: {
+      type: new GraphQLList(BuildingType),
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM buildings WHERE id = ${parent.id}`
+        );
+
+        return rows;
+      },
+    },
+    address: {
+      type: AddressType,
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM addresses WHERE id = ${parent.address_id}`
+        );
+
+        return rows[0];
+      },
+    },
+    batteries: {
+      type: new GraphQLList(BatteryType),
+      resolve: async (parent, args) => {
+        const [rows, fields] = await promisePool.query(
+          `SELECT * FROM batteries WHERE id = ${parent.id}`
+        );
+
+        return rows;
+      },
+    },
   }),
 });
 
@@ -304,36 +357,34 @@ const EmployeeType = new GraphQLObjectType({
   }),
 });
 
-//Mutation++++++++++++
+//Mutation
 
 const RootMutationType = new GraphQLObjectType({
-  name: 'Mutation',
-  description: 'Root Mutation',
+  name: "Mutation",
+  description: "Root Mutation",
   fields: () => ({
     update_intervention_intervention_start: {
       type: InterventionType,
       description: "Update new Intervention Type",
       args: {
         id: {
-          type: new GraphQLNonNull(GraphQLInt)
-        }
+          type: new GraphQLNonNull(GraphQLInt),
+        },
       },
       resolve: async (parent, args) => {
         const [rows, fields] = await promisePool.query(
           `SELECT * FROM interventions WHERE id = ${args.id}`
         );
-        const intervention = rows[0]
-        intervention.status = 'InProgress'
-        intervention.intervention_start = new Date()
-        
-       
-      
+        const intervention = rows[0];
+        intervention.status = "InProgress";
+        intervention.intervention_start = new Date();
+
         var today = new Date();
-        var year = String(today.getFullYear())
-        var month = String(today.getMonth() + 1)
-        var day = String(today.getDate())
-        var today = year + '-' +  month + '-'+ day
-       
+        var year = String(today.getFullYear());
+        var month = String(today.getMonth() + 1);
+        var day = String(today.getDate());
+        var today = year + "-" + month + "-" + day;
+
         await promisePool.query(
           `UPDATE interventions
           SET status = '${intervention.status}', intervention_start = '${today}'
@@ -341,33 +392,31 @@ const RootMutationType = new GraphQLObjectType({
           `
         );
 
-        return intervention
-      }
+        return intervention;
+      },
     },
     update_intervention_intervention_end: {
       type: InterventionType,
       description: "Update new Intervention Type",
       args: {
         id: {
-          type: new GraphQLNonNull(GraphQLInt)
-        }
+          type: new GraphQLNonNull(GraphQLInt),
+        },
       },
       resolve: async (parent, args) => {
         const [rows, fields] = await promisePool.query(
           `SELECT * FROM interventions WHERE id = ${args.id}`
         );
-        const intervention = rows[0]
-        intervention.status = 'Completed'
-        intervention.intervention_start = new Date()
-        
-       
-      
+        const intervention = rows[0];
+        intervention.status = "Completed";
+        intervention.intervention_start = new Date();
+
         var today = new Date();
-        var year = String(today.getFullYear())
-        var month = String(today.getMonth() + 1)
-        var day = String(today.getDate())
-        var today = year + '-' +  month + '-'+ day
-       
+        var year = String(today.getFullYear());
+        var month = String(today.getMonth() + 1);
+        var day = String(today.getDate());
+        var today = year + "-" + month + "-" + day;
+
         await promisePool.query(
           `UPDATE interventions
           SET status = '${intervention.status}', intervention_end = '${today}'
@@ -375,11 +424,11 @@ const RootMutationType = new GraphQLObjectType({
           `
         );
 
-        return intervention
-      }
-    }
-  })
-})
+        return intervention;
+      },
+    },
+  }),
+});
 
 //Queries
 const RootQueryType = new GraphQLObjectType({
@@ -450,10 +499,12 @@ const RootQueryType = new GraphQLObjectType({
       description: "A building",
       args: {
         id: { type: GraphQLInt },
+        // contact_email: { type: GraphQLString },
       },
       resolve: async (parent, args) => {
         const [rows, fields] = await promisePool.query(
           `SELECT * FROM buildings WHERE id = ${args.id}`
+          // `SELECT * FROM buildings WHERE contact_email = '${args.building.customer.contact_email}'`
         );
         console.log(rows[0]);
         return rows[0];
@@ -499,11 +550,13 @@ const RootQueryType = new GraphQLObjectType({
       type: CustomerType,
       description: "A customer",
       args: {
-        id: { type: GraphQLInt },
+        // id: { type: GraphQLInt },
+        contact_email: { type: GraphQLString },
       },
       resolve: async (parent, args) => {
         const [rows, fields] = await promisePool.query(
-          `SELECT * FROM customers WHERE id = ${args.id}`
+          // `SELECT * FROM customers WHERE id = ${args.id}`
+          `SELECT * FROM customers WHERE contact_email = '${args.contact_email}'`
         );
         console.log(rows[0]);
         return rows[0];
@@ -624,7 +677,7 @@ const RootQueryType = new GraphQLObjectType({
 //Schema creation
 const schema = new GraphQLSchema({
   query: RootQueryType,
-  mutation: RootMutationType
+  mutation: RootMutationType,
 });
 
 //Express Server
